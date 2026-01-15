@@ -6,7 +6,6 @@
  )
 
  func CapsFirstLetter(s string) string {
-	// word := ""
 	sByte := []byte(s)
 	for i, char := range sByte{
 		if i == 0 && (char >= 65 && char <= 90){
