@@ -6,6 +6,7 @@ import (
 	"errors"
 	sc "go_reloaded/pkg/capitalise"
 	hc "go_reloaded/pkg/baseConversion"
+	ac "go_reloaded/pkg"
 
 )
 
@@ -65,6 +66,8 @@ func ProcessData(strSlice string) string{
 			splitted[i-1] = hc.BinaryToDecimal(splitted[i-1])
 			splitted = append(splitted[:i], splitted[i+1:]...)
 			strings.Join(splitted[:], " ")
+		}else if splitted[i] == "a" || splitted[i] == "A" {
+			splitted[i] = ac.CheckForArticle(splitted[i+1])
 		}
 
 	}
