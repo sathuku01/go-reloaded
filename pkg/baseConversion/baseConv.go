@@ -2,14 +2,18 @@ package go_reloaded
 
 import(
 	"strconv"
+	"log"
+	// "fmt"
 )
 
 func HexTodec(strHex string) string {
 	hex, err := strconv.ParseInt(strHex, 16, 64)
 
 	if err != nil {
-		return "Error converting hex to dec."
+		log.Fatal("Error converting hex to dec") 
+		
 	}
+	
 	return strconv.FormatInt(hex, 10)
 }
 

@@ -4,9 +4,11 @@ import (
 	"strings"
 	"log"
 	"errors"
+	"fmt"
 	sc "go_reloaded/pkg/capitalise"
 	hc "go_reloaded/pkg/baseConversion"
-	ac "go_reloaded/pkg"
+	ac "go_reloaded/pkg/article"
+	pc "go_reloaded/pkg/punctuation"
 
 )
 
@@ -60,6 +62,7 @@ func ProcessData(strSlice string) string{
 			strings.Join(splitted, " ")
 		}else if splitted[i] == "(hex)" && i > 0 {
 			splitted[i-1] = hc.HexTodec(splitted[i-1])
+			fmt.Println(splitted[i])
 			splitted = append(splitted[:i], splitted[i+1:]...)
 			strings.Join(splitted, " ")
 		}else if splitted[i] == "(bin)" && i > 0 {
@@ -79,6 +82,9 @@ func ProcessData(strSlice string) string{
 			finalResult += " " + char
 		}
 	}
-	return finalResult
 	
+
+	// checkStr := []rune(finalResult)
+	newStr := pc.TextCorrected(finalResult)
+	return string(newStr)
 }
