@@ -39,8 +39,19 @@ func main(){
 		return
 	}
 
-	fmt.Println(text)
-	// fmt.Println(len(splitted))
-	// fmt.Println(splitted)
-	fmt.Println(pc.ProcessData(text))
+	output, Err := os.Create("result.txt")
+
+	if Err != nil {
+		log.Fatal(Err)
+		return
+	}
+
+	text = pc.ProcessData(text)
+	_, Err = output.WriteString(text)
+
+	if Err != nil {
+		log.Fatal(Err)
+		return
+	}
+	
 }
