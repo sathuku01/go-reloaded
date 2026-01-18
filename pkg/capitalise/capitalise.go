@@ -1,64 +1,105 @@
- package capitalise
- 
- import(
+package capitalise
+
+import (
 	"strconv"
+	"strings"
+	"unicode"
+)
 
- )
+func ApplyTransformations(tokens []string) []string {
+	operations := map[string]func(string) string{
+		"cap": capitalizeSingle,
+		"up":  uppercaseSingle,
+		"low": lowercaseSingle,
+	}
 
- func CapsFirstLetter(s string) string {
-	sByte := []byte(s)
-	for i, char := range sByte{
-		if i == 0 && (char >= 65 && char <= 90){
+	index := 0
+	for index < len(tokens) {
+		if !strings.Contains(tokens[index], "(") {
+			index++
 			continue
-		} else if i == 0 && (char >= 97 && char <= 122) {
-			sByte[i] = char - 32
-		} else if char >= 65 && char <= 90 && i > 0{
-			sByte[i] = char + 32
-		} 
-	}
-	return string(sByte)
- }
+		}
 
-func ToUpper(s string) string{
-	sByte := []byte(s)
+		startIndex := index
+		rawCommand := tokens[index]
+		endIndex := index
 
-	convertedString := ""
-	for _, char := range sByte{
-		if (char >= 97 && char <= 122){
-			convertedString += string(char - 32)
+		for !strings.Contains(tokens[endIndex], ")") {
+			endIndex++
+			if endIndex >= len(tokens) {
+				break
+			}
+			rawCommand += tokens[endIndex]
+		}
+
+		processedCommand := rawCommand
+
+		closingBracketPos := strings.Index(processedCommand, ")")
+		trailingPunctuation := ""
+		if closingBracketPos != -1 && closingBracketPos+1 < len(processedCommand) {
+			trailingPunctuation = processedCommand[closingBracketPos+1:]
+			processedCommand = processedCommand[:closingBracketPos+1]
+		}
+
+		processedCommand = strings.TrimPrefix(processedCommand, "(")
+		processedCommand = strings.TrimSuffix(processedCommand, ")")
+
+		commandParts := strings.Split(processedCommand, ",")
+
+		actionKey := strings.TrimSpace(commandParts[0])
+		transformFunc, exists := operations[actionKey]
+		if !exists {
+			index++
+			continue
+		}
+
+		if len(commandParts) == 1 {
+			if startIndex-1 >= 0 {
+				tokens[startIndex-1] = transformFunc(tokens[startIndex-1])
+			}
+		}
+
+		if len(commandParts) == 2 {
+			lookbackCount, parseErr := strconv.Atoi(strings.TrimSpace(commandParts[1]))
+			if parseErr == nil && lookbackCount > 0 {
+				applyFrom := startIndex - lookbackCount
+				if applyFrom < 0 {
+					applyFrom = 0
+				}
+				for j := applyFrom; j < startIndex; j++ {
+					tokens[j] = transformFunc(tokens[j])
+				}
+			}
+		}
+
+		if trailingPunctuation != "" {
+			tokens[startIndex] = trailingPunctuation
+			copy(tokens[startIndex+1:], tokens[endIndex+1:])
+			tokens = tokens[:len(tokens)-(endIndex-startIndex)]
+			index = startIndex + 1
 		} else {
-			convertedString += string(char)
+			copy(tokens[startIndex:], tokens[endIndex+1:])
+			tokens = tokens[:len(tokens)-(endIndex-startIndex+1)]
+			index = startIndex
 		}
 	}
-	return convertedString
+
+	return tokens
 }
 
-func ToLower (s string) string{
-sByte := []byte(s)
-
-	convertedString := ""
-	for _, char := range sByte{
-		if (char >= 65 && char <= 90){
-			convertedString += string(char + 32)
-		} else {
-			convertedString += string(char)
+func capitalizeSingle(input string) string {
+	for i, character := range input {
+		if unicode.IsLetter(character) {
+			return input[:i] + strings.ToUpper(string(character)) + strings.ToLower(input[i+1:])
 		}
 	}
-	return convertedString
-
+	return input
 }
 
- func ExrtractNumFromString(numString string) int {
-	numStringByte := []byte(numString)
-	extracted := ""
-	for _, num := range numStringByte{
-		if num >= 48 && num <= 57{
-			extracted += string(num)
-		}
-	}
-	intNum, err := strconv.Atoi(extracted) 
-	if err != nil {
-		return -1
-	}
-	return intNum
- }
+func uppercaseSingle(input string) string {
+	return strings.ToUpper(input)
+}
+
+func lowercaseSingle(input string) string {
+	return strings.ToLower(input)
+}
