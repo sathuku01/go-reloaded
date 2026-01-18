@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"bufio"
 	"log"
-	// "strings"
+	"strings"
 	// sc "go_reloaded/pkg/capitalise"
 	// hc "go_reloaded/pkg/baseConversion"
 	pc "go_reloaded/process"
@@ -27,11 +27,10 @@ func main(){
 	defer file.Close()
 
 	// Read the contents of the file.
-	text := ""
+	text := []string{}
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan(){
-		lineRead := scanner.Text()
-		text = lineRead + " "
+		text = append(text, scanner.Text())
 	}
 
 	if err := scanner.Err(); err != nil {
@@ -47,7 +46,7 @@ func main(){
 	}
 
 	text = pc.ProcessData(text)
-	_, Err = output.WriteString(text)
+	_, Err = output.WriteString(strings.Join(text, " "))
 
 	if Err != nil {
 		log.Fatal(Err)
