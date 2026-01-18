@@ -2,27 +2,42 @@ package go_reloaded
 
 import(
 	"strconv"
-	"log"
-	// "fmt"
 )
 
-func HexTodec(strHex string) string {
-	hex, err := strconv.ParseInt(strHex, 16, 64)
 
-	if err != nil {
-		log.Fatal("Error converting hex to dec") 
-		
-	}
-	
-	return strconv.FormatInt(hex, 10)
+func HexTodec(splitted []string) []string {
+
+    for i := 0; i < len(splitted); i++ {
+        if splitted[i] == "(hex)" && i > 0 {
+            val, err := strconv.ParseInt(splitted[i-1], 16, 64)
+            if err == nil {
+                splitted[i-1] = strconv.FormatInt(val, 10)
+            }
+            splitted = append(splitted[:i], splitted[i+1:]...)
+            i--
+        }
+    }
+
+    return splitted
+
 }
 
-// converts a binary string to decimal.
-func BinaryToDecimal(bin string) string {
-	dec := 0
+
+func BinaryToDecimal(bin []string) []string {
+	
 	for i := 0; i < len(bin); i++ {
-		dec = dec*2 + int(bin[i]-'0')
+
+		if bin[i] == "(bin)" {
+
+			bins, err := strconv.ParseInt(bin[i-1], 2, 64)
+			if err == nil {
+				bin[i-1] = strconv.FormatInt(bins, 10)
+			}
+
+			bin = append(bin[:i], bin[i+1:]...)
+			i--
+		}
 
 	}
-	return strconv.Itoa(dec)
+	return bin
 }
