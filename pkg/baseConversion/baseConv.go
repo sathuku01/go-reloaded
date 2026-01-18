@@ -1,30 +1,28 @@
 package go_reloaded
 
-import(
+import (
 	"strconv"
 )
 
-
 func HexTodec(splitted []string) []string {
 
-    for i := 0; i < len(splitted); i++ {
-        if splitted[i] == "(hex)" && i > 0 {
-            val, err := strconv.ParseInt(splitted[i-1], 16, 64)
-            if err == nil {
-                splitted[i-1] = strconv.FormatInt(val, 10)
-            }
-            splitted = append(splitted[:i], splitted[i+1:]...)
-            i--
-        }
-    }
+	for i := 0; i < len(splitted); i++ {
+		if splitted[i] == "(hex)" && i > 0 {
+			val, err := strconv.ParseInt(splitted[i-1], 16, 64)
+			if err == nil {
+				splitted[i-1] = strconv.FormatInt(val, 10)
+			}
+			splitted = append(splitted[:i], splitted[i+1:]...)
+			i--
+		}
+	}
 
-    return splitted
+	return splitted
 
 }
 
-
 func BinaryToDecimal(bin []string) []string {
-	
+
 	for i := 0; i < len(bin); i++ {
 
 		if bin[i] == "(bin)" {

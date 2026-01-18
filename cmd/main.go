@@ -1,19 +1,16 @@
 package main
 
 import (
-	"os"
-	"fmt"
 	"bufio"
-	"log"
-	"strings"
-	// sc "go_reloaded/pkg/capitalise"
-	// hc "go_reloaded/pkg/baseConversion"
+	"fmt"
 	pc "go_reloaded/process"
+	"log"
+	"os"
+	"strings"
 )
 
-func main(){
-	if len(os.Args) < 1{
-		// log.Fatal()
+func main() {
+	if len(os.Args) < 1 {
 		fmt.Println("Error: Empty field")
 	}
 	path := string(os.Args[1])
@@ -29,7 +26,7 @@ func main(){
 	// Read the contents of the file.
 	text := []string{}
 	scanner := bufio.NewScanner(file)
-	for scanner.Scan(){
+	for scanner.Scan() {
 		text = append(text, scanner.Text())
 	}
 
@@ -52,5 +49,5 @@ func main(){
 		log.Fatal(Err)
 		return
 	}
-	
+
 }

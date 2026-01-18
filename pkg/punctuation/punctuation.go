@@ -31,7 +31,7 @@ func FormatPunctuation(words []string) []string {
 	text = addSpacesAfterPunctuation(text)
 
 	text = handlePunctuationGroups(text)
-	
+
 	text = smartSentenceCapitalization(text)
 
 	return strings.Fields(text)
@@ -40,35 +40,35 @@ func FormatPunctuation(words []string) []string {
 func addSpacesAfterPunctuation(text string) string {
 	runes := []rune(text)
 	result := make([]rune, 0, len(runes))
-	
+
 	for i := 0; i < len(runes); i++ {
 		r := runes[i]
 		result = append(result, r)
-		
+
 		if strings.ContainsRune(".,!?:;", r) {
 			if i+1 < len(runes) {
 				next := runes[i+1]
 
-				if unicode.IsLetter(next) && next != '\'' && 
-				   !strings.ContainsRune(".,!?:;", next) {
+				if unicode.IsLetter(next) && next != '\'' &&
+					!strings.ContainsRune(".,!?:;", next) {
 					result = append(result, ' ')
 				}
 			}
 		}
 	}
-	
+
 	return string(result)
 }
 
 func handlePunctuationGroups(text string) string {
 	runes := []rune(text)
 	result := make([]rune, 0, len(runes))
-	
+
 	i := 0
 	for i < len(runes) {
 		r := runes[i]
 		result = append(result, r)
-		
+
 		if strings.ContainsRune(".,!?:;", r) {
 			j := i + 1
 			for j < len(runes) && strings.ContainsRune(".,!?:;", runes[j]) {
@@ -79,26 +79,26 @@ func handlePunctuationGroups(text string) string {
 				i = j - 1
 			}
 		}
-		
+
 		i++
 	}
-	
+
 	return string(result)
 }
 
 func smartSentenceCapitalization(text string) string {
 	runes := []rune(text)
 	capitalizeNext := true
-	
+
 	for i, r := range runes {
 		if capitalizeNext && unicode.IsLetter(r) {
 			runes[i] = unicode.ToUpper(r)
 			capitalizeNext = false
 		}
-		
+
 		if r == '.' || r == '!' || r == '?' {
 			isEndOfSentence := false
-			
+
 			if i+1 < len(runes) {
 				next := runes[i+1]
 				if next == ' ' || i+1 == len(runes)-1 {
@@ -107,16 +107,16 @@ func smartSentenceCapitalization(text string) string {
 			} else {
 				isEndOfSentence = true
 			}
-			
+
 			if isEndOfSentence {
 				capitalizeNext = true
 			}
 		}
-		
+
 		if r == ':' || (i > 0 && runes[i-1] == '.' && i > 1 && runes[i-2] == '.' && i > 2 && runes[i-3] == '.') {
 			capitalizeNext = false
 		}
 	}
-	
+
 	return string(runes)
 }
